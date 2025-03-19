@@ -18,8 +18,8 @@
   ```sudo apt install clang-format```
 
   Необходимая версия clang-format: \
-  **Mac** 18.1.6 \
-  **Linux** 18.1.3
+  **Mac** 18.1.8 \
+  **Linux** 18.1.8
 
   Google Style: https://google.github.io/styleguide/cppguide.html
 
