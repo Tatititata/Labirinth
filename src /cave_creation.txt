@@ -1,0 +1,38 @@
+30 50
+0.7
+5 4
+
+30 50
+0.8
+5 4
+
+30 50
+0.9
+5 4
+
+30 50
+0.4
+5 4
+
+30 50
+0.5
+5 5
+
+30 50
+0.5
+7 0 - no changes
+6 0 - thin passages
+5 0 - a bit thicker passages
+4(3, 2, 1) 0 - empty field
+
+
+30 50
+0.5
+1(2, 3, 4) 0 bad result
+5 0 more or less ok
+
+30 50
+0.4 - 0.8
+5 4 (4 3) - best results
+ 
+
