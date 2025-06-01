@@ -1,6 +1,6 @@
 # Labyrinth Generator and Solver
 
-![Logo](web/labyrinth.svg)
+![Logo](labyrinth.svg)
 
 ## 📘 Описание проекта
 
