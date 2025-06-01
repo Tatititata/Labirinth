@@ -33,7 +33,7 @@ function generateEllerMaze(rows, cols) {
     hWalls[rows - 1][j] = 1;
   }
   hWalls[rows - 1][cols - 1] = 1;
-  return { vWalls, hWalls };
+  return {vWalls, hWalls};
 }
 
 function makeVerticalWalls(vWalls, set, i, cols) {
@@ -129,18 +129,18 @@ class Queue {
 
 function canGo(maze, r1, c1, r2, c2, vWalls, hWalls) {
   if (r2 < 0 || r2 >= maze.rows || c2 < 0 || c2 >= maze.cols) return false;
-  if (r1 === r2 && c1 === c2 + 1) return !vWalls[r2][c2]; // left
-  if (r1 === r2 && c1 + 1 === c2) return !vWalls[r1][c1]; // right
-  if (r1 + 1 === r2 && c1 === c2) return !hWalls[r1][c1]; // down
-  if (r1 === r2 + 1 && c1 === c2) return !hWalls[r2][c2]; // up
+  if (r1 === r2 && c1 === c2 + 1) return !vWalls[r2][c2];  // left
+  if (r1 === r2 && c1 + 1 === c2) return !vWalls[r1][c1];  // right
+  if (r1 + 1 === r2 && c1 === c2) return !hWalls[r1][c1];  // down
+  if (r1 === r2 + 1 && c1 === c2) return !hWalls[r2][c2];  // up
   return false;
 }
 
-let maze = { rows: 20, cols: 30 };
+let maze = {rows: 20, cols: 30};
 let vWalls = [];
 let hWalls = [];
-let start = new Point(0, 0); 
-let end = new Point(19, 29); 
+let start = new Point(0, 0);
+let end = new Point(19, 29);
 let path = [];
 let currentPathStep = 0;
 let isAnimatingPath = false;
@@ -150,7 +150,7 @@ let pathAnimationId = null;
 function bfs(maze, start, end, vWalls, hWalls) {
   const rows = maze.rows;
   const cols = maze.cols;
-  const prev = Array.from({ length: rows }, () => Array(cols).fill(null));
+  const prev = Array.from({length: rows}, () => Array(cols).fill(null));
   const q = new Queue();
   const dr = [-1, 1, 0, 0];
   const dc = [0, 0, -1, 1];
@@ -167,7 +167,8 @@ function bfs(maze, start, end, vWalls, hWalls) {
       for (let d = 0; d < 4; d++) {
         const nr = cur.row + dr[d];
         const nc = cur.col + dc[d];
-        if (canGo(maze, cur.row, cur.col, nr, nc, vWalls, hWalls) && !prev[nr][nc]) {
+        if (canGo(maze, cur.row, cur.col, nr, nc, vWalls, hWalls) &&
+            !prev[nr][nc]) {
           prev[nr][nc] = cur;
           q.enqueue(new Point(nr, nc));
         }
@@ -192,7 +193,7 @@ function drawPoint(point, color) {
   const ctx = canvas.getContext('2d');
   const cellWidth = canvas.width / maze.cols;
   const cellHeight = canvas.height / maze.rows;
-  const size = Math.min(cellWidth, cellHeight) * 0.5; 
+  const size = Math.min(cellWidth, cellHeight) * 0.5;
   const x = (point.col + 0.5) * cellWidth - size / 2;
   const y = (point.row + 0.5) * cellHeight - size / 2;
   ctx.fillStyle = color;
@@ -202,7 +203,7 @@ function drawPoint(point, color) {
 function generateMaze() {
   const rows = parseInt(document.getElementById('rows').value);
   const cols = parseInt(document.getElementById('cols').value);
-  maze = { rows, cols };
+  maze = {rows, cols};
   const result = generateEllerMaze(rows, cols);
   vWalls = result.vWalls;
   hWalls = result.hWalls;
@@ -259,7 +260,7 @@ function solveMaze() {
   path = [];
   currentStep = 0;
   path = bfs(maze, start, end, vWalls, hWalls);
-  
+
   if (path.length === 0) {
     alert('Путь не найден!');
     return;
@@ -304,7 +305,7 @@ function stopPathAnimation() {
     clearTimeout(pathAnimationId);
     pathAnimationId = null;
   }
-  document.getElementById('solveMaze').textContent = "Solve maze";
+  document.getElementById('solveMaze').textContent = 'Solve maze';
 }
 
 
@@ -312,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
   resetInputsToDefaults();
   const rows = parseInt(document.getElementById('rows').value);
   const cols = parseInt(document.getElementById('cols').value);
-  maze = { rows, cols };
+  maze = {rows, cols};
   start = new Point(0, 0);
   end = new Point(rows - 1, cols - 1);
   const result = generateEllerMaze(rows, cols);
@@ -332,24 +333,24 @@ function resetInputsToDefaults() {
   document.getElementById('cols').value = 50;
   document.getElementById('startRow').value = 1;
   document.getElementById('startCol').value = 1;
-  document.getElementById('endRow').value = 25; 
-  document.getElementById('endCol').value = 50; 
+  document.getElementById('endRow').value = 25;
+  document.getElementById('endCol').value = 50;
 }
 
 document.getElementById('solveMaze').onclick = function() {
   if (isAnimatingPath) {
     stopPathAnimation();
-    this.textContent = "Solve maze";
+    this.textContent = 'Solve maze';
   } else {
     if (path.length === 0) {
       path = bfs(maze, start, end, vWalls, hWalls);
       if (path.length === 0) {
-        alert("Can not find passage");
+        alert('Can not find passage');
         return;
       }
       currentPathStep = 1;
     }
-    this.textContent = "Stop";
+    this.textContent = 'Stop';
     animatePath();
   }
 };
@@ -370,4 +371,3 @@ document.getElementById('nextStep').onclick = function() {
   drawPoint(path[currentPathStep], 'rgb(255, 0, 0)');
   currentPathStep++;
 };
-

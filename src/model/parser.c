@@ -1,10 +1,14 @@
 #include "model.h"
 
-void get_string(char str[STR_SIZE], FILE *input) {
+bool get_string(char str[STR_SIZE], FILE *input) {
   memset(str, 0, STR_SIZE);
-  fgets(str, STR_SIZE, input);
-  char *ptr = strrchr(str, '\n');
-  if (ptr) *ptr = 0;
+  char *result = fgets(str, STR_SIZE, input);
+  // fgets(str, STR_SIZE, input);
+  if (result) {
+    char *ptr = strrchr(str, '\n');
+    if (ptr) *ptr = 0;
+  }
+  return result;
 }
 
 void get_row_col(int *rows, int *cols, char ch) {
@@ -56,21 +60,24 @@ bool parse_maze_file(FILE *f, Maze *maze, char c) {
 bool load_matrix(FILE *f, int **matrix, int rows, int cols) {
   bool result = true;
   char str[STR_SIZE] = {0};
-  while (!strlen(str)) get_string(str, f);
-  for (int i = 0; i < rows && result; ++i) {
-    char *ptr = strtok(str, " ");
-    for (int j = 0; j < cols && result; ++j) {
-      if (!ptr)
-        result = false;
-      else if (!strcmp(ptr, "0"))
-        matrix[i][j] = 0;
-      else if (!strcmp(ptr, "1"))
-        matrix[i][j] = 1;
-      else
-        result = false;
-      ptr = strtok(NULL, " ");
+  int i = 0;
+
+  while (i < rows && get_string(str, f)) {
+    if (strlen(str)) {
+      const char *ptr = strtok(str, " ");
+      for (int j = 0; j < cols && result; ++j) {
+        if (!ptr)
+          result = false;
+        else if (!strcmp(ptr, "0"))
+          matrix[i][j] = 0;
+        else if (!strcmp(ptr, "1"))
+          matrix[i][j] = 1;
+        else
+          result = false;
+        ptr = strtok(NULL, " ");
+      }
+      ++i;
     }
-    get_string(str, f);
   }
   return result;
 }
@@ -93,6 +100,6 @@ int get_milliseconds() {
   char str[STR_SIZE] = {0};
   get_string(str, stdin);
   int num = atoi(str);
-  if (num <= 0) num = 0;
+  if (num < 50 || num > 500) num = 0;
   return num;
 }

@@ -23,7 +23,7 @@ typedef struct {
 bool generate_eller_maze(Maze *maze);
 void make_vertical_walls(Maze *maze, int *set, int i);
 void make_last_line(Maze *maze, int *set);
-void check_horizontal_pass(Maze *maze, int *set, int i, int uniques);
+void check_horizontal_pass(Maze *maze, const int *set, int i, int uniques);
 bool create_matrix(int ***pass, int rows, int cols);
 void free_matrix(int ***matrix);
 void destroy_maze(Maze *maze);
@@ -31,7 +31,7 @@ void destroy_maze(Maze *maze);
 // maze_solver
 void bfs(Maze *maze, Point end, Point start, Pass *pass);
 bool queue_init(Queue *q, int size);
-bool queue_empty(Queue *q);
+bool queue_empty(const Queue *q);
 void enqueue(Queue *q, Point p);
 Point dequeue(Queue *q);
 bool can_go(Maze *maze, int r1, int c1, int r2, int c2);
@@ -54,7 +54,7 @@ bool manual_or_automatic();
 bool parse_maze_file(FILE *f, Maze *maze, char c);
 double get_chance_value();
 int get_milliseconds();
-void get_row_col(int *rows, int *cols, char c);
-void get_string(char str[STR_SIZE], FILE *input);
+void get_row_col(int *rows, int *cols, char ch);
+bool get_string(char str[STR_SIZE], FILE *input);
 
 #endif  // MODEL_H

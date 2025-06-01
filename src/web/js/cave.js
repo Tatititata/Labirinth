@@ -68,7 +68,7 @@ function evolveCave(cave, birth, death) {
       cave.v_w[i][j] = cave.h_w[i][j];
     }
   }
-  return !changed; 
+  return !changed;
 }
 
 function drawCave(cave) {
@@ -96,7 +96,7 @@ document.getElementById('generateMaze').onclick = function() {
   const rows = parseInt(document.getElementById('rows').value);
   const cols = parseInt(document.getElementById('cols').value);
   cave = new Cave(rows, cols);
-  generateCave(cave); 
+  generateCave(cave);
   drawCave(cave);
   maxSteps = 7 + Math.floor((cave.rows + cave.cols) / 3);
 };
@@ -107,14 +107,14 @@ let animationId = null;
 function animateCave(cave, birth, death, currentStep = 0) {
   if (!isAnimating || currentStep >= maxSteps) {
     isAnimating = false;
-    document.getElementById('solveMaze').textContent = "Solve cave";
+    document.getElementById('solveMaze').textContent = 'Solve cave';
     return;
   }
   const stable = evolveCave(cave, birth, death);
   drawCave(cave);
   if (stable) {
     isAnimating = false;
-    document.getElementById('solveMaze').textContent = "Solve cave";
+    document.getElementById('solveMaze').textContent = 'Solve cave';
     return;
   }
   const ms = parseInt(document.getElementById('delayMs').value) || 200;
@@ -128,7 +128,7 @@ function stopAnimation() {
     clearTimeout(animationId);
     animationId = null;
     isAnimating = false;
-    document.getElementById('solveMaze').textContent = "Solve cave";
+    document.getElementById('solveMaze').textContent = 'Solve cave';
   }
 }
 
@@ -137,7 +137,7 @@ document.getElementById('solveMaze').onclick = function() {
     stopAnimation();
   } else {
     isAnimating = true;
-    this.textContent = "Stop";
+    this.textContent = 'Stop';
     const birth = parseInt(document.getElementById('birth').value);
     const death = parseInt(document.getElementById('death').value);
     maxSteps = 7 + Math.floor((cave.rows + cave.cols) / 3);
@@ -146,7 +146,7 @@ document.getElementById('solveMaze').onclick = function() {
 };
 
 document.getElementById('nextStep').onclick = function() {
-  stopAnimation(); 
+  stopAnimation();
   const birth = parseInt(document.getElementById('birth').value);
   const death = parseInt(document.getElementById('death').value);
   evolveCave(cave, birth, death);
@@ -167,6 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const rows = parseInt(document.getElementById('rows').value);
   const cols = parseInt(document.getElementById('cols').value);
   cave = new Cave(rows, cols);
-  generateCave(cave); 
+  generateCave(cave);
   drawCave(cave);
 });

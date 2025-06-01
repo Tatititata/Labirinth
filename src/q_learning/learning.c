@@ -2,8 +2,6 @@
 
 void q_agent_init(QLearningAgent *agent, Point goal) {
   agent->goal = goal;
-  agent->initialized = 1;
-
   for (int i = 0; i < 50; i++) {
     for (int j = 0; j < 50; j++) {
       for (int k = 0; k < ACTIONS; k++) {
@@ -31,11 +29,14 @@ Point q_agent_choose_action(QLearningAgent *agent, Point cur, Maze *maze,
   Point next = cur;
   if ((double)rand() / RAND_MAX < EPSILON) {
     bool cango = false;
-    while (!cango) {
+    int steps = 0;
+    while (!cango && steps < ACTIONS) {
       *action = rand() % ACTIONS;
       next = get_next_point(cur, *action);
       cango = can_go(maze, cur.row, cur.col, next.row, next.col);
+      ++steps;
     }
+    if (!cango) next = cur;
   } else {
     double max_q = -INFINITY;
     for (int a = 0; a < ACTIONS; a++) {
@@ -68,33 +69,26 @@ void q_agent_update(QLearningAgent *agent, Point cur, int action, Point next,
 void q_agent_train(QLearningAgent *agent, Maze *maze) {
   double penalty = (double)REWARD / 7.0 / (double)MAX_STEP_PER_EPISODE;
 
-  if (!agent->initialized) return;
-
   for (int episode = 0; episode < MAX_EPISODES; episode++) {
+#ifndef TESTING
     if (episode % 1000 == 0) {
       printf(".");
       fflush(stdout);
     }
+#endif
     Point current = {.row = rand() % maze->rows, .col = rand() % maze->cols};
-
-    double episode_reward = 0.0;
     int steps = 0;
-
     while (
         !(current.row == agent->goal.row && current.col == agent->goal.col) &&
         steps < MAX_STEP_PER_EPISODE) {
       int action;
       Point next = q_agent_choose_action(agent, current, maze, &action);
-
       double reward = penalty;
       if (next.row == agent->goal.row && next.col == agent->goal.col) {
         reward = REWARD;
       }
-
       q_agent_update(agent, current, action, next, reward);
-      episode_reward += reward;
       steps++;
-
       current = next;
     }
   }
@@ -103,50 +97,48 @@ void q_agent_train(QLearningAgent *agent, Maze *maze) {
 bool q_agent_find_path(QLearningAgent *agent, Maze *maze, Point start,
                        Pass *pass) {
   bool result = false;
-  if (agent->initialized) {
-    clear_pass(maze, pass);
-    int max_steps = maze->rows * maze->cols;
-    result = create_array(&(pass->route), max_steps);
+  clear_pass(maze, pass);
+  int max_steps = maze->rows * maze->cols;
+  result = create_array(&(pass->route), max_steps);
 
-    if (result) {
-      pass->length = 0;
-      Point cur = start;
+  if (result) {
+    pass->length = 0;
+    Point cur = start;
 
-      pass->route[pass->length] = cur;
-      pass->length++;
+    pass->route[pass->length] = cur;
+    pass->length++;
 
-      while (!(cur.row == agent->goal.row && cur.col == agent->goal.col) &&
-             pass->length < max_steps) {
-        double max_q = -INFINITY;
-        Point next = cur;
+    while (!(cur.row == agent->goal.row && cur.col == agent->goal.col) &&
+           pass->length < max_steps) {
+      double max_q = -INFINITY;
+      Point next = cur;
 
-        for (int a = 0; a < ACTIONS; a++) {
-          Point tmp = get_next_point(cur, a);
-          if (can_go(maze, cur.row, cur.col, tmp.row, tmp.col)) {
-            if (agent->q_table[cur.row][cur.col][a] > max_q) {
-              max_q = agent->q_table[cur.row][cur.col][a];
-              next = tmp;
-            }
+      for (int a = 0; a < ACTIONS; a++) {
+        Point tmp = get_next_point(cur, a);
+        if (can_go(maze, cur.row, cur.col, tmp.row, tmp.col)) {
+          if (agent->q_table[cur.row][cur.col][a] > max_q) {
+            max_q = agent->q_table[cur.row][cur.col][a];
+            next = tmp;
           }
         }
-        cur = next;
-        pass->route[pass->length] = cur;
-        pass->length++;
       }
+      cur = next;
+      pass->route[pass->length] = cur;
+      pass->length++;
+    }
 
-      if (cur.row == agent->goal.row && cur.col == agent->goal.col) {
-        result = true;
-      } else {
-        clear_pass(maze, pass);
-        result = false;
-      }
+    if (cur.row == agent->goal.row && cur.col == agent->goal.col) {
+      result = true;
+    } else {
+      clear_pass(maze, pass);
+      result = false;
     }
   }
   return result;
 }
 
-void visualize_q_values(QLearningAgent *agent, Maze *maze) {
-  printf("\nQ-values visualization:\n");
+void visualize_q_values(FILE *out, QLearningAgent *agent, const Maze *maze) {
+  fprintf(out, "\nQ-values visualization:\n");
   for (int i = 0; i < maze->rows; i++) {
     for (int j = 0; j < maze->cols; j++) {
       double max_q = -INFINITY;
@@ -155,8 +147,8 @@ void visualize_q_values(QLearningAgent *agent, Maze *maze) {
           max_q = agent->q_table[i][j][a];
         }
       }
-      printf("%6.1f ", max_q);
+      fprintf(out, "%6.1f ", max_q);
     }
-    printf("\n");
+    fprintf(out, "\n");
   }
 }

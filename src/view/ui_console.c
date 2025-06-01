@@ -1,31 +1,32 @@
 #include "ui_console.h"
 
+#define RED "\033[1;31m"
+#define RESET "\033[0m"
+
 void print_start_menu() {
-  printf("To create a maze press 'm' button. ");
-  printf("To create a cave press 'c' button. ");
-  printf("To quit press 'q' button. ");
+  printf("To create a maze press " RED "'m'" RESET " button. ");
+  printf("To create a cave press " RED "'c'" RESET " button. ");
+  printf("To quit press " RED "'q'" RESET " button. ");
 }
 
 void print_load_or_create_menu() {
-  printf("To load from file press 'f' button. ");
-  printf("To create press 'c' button. ");
-  printf("q - Quit to previous menu. ");
+  printf("To load from file press " RED "'f'" RESET " button. ");
+  printf("To create press " RED "'c'" RESET " button. ");
+  printf(RED "q" RESET " - Quit to previous menu. ");
 }
 
 void print_find_pass_menu(char c) {
-  if (c == 'm')
-    printf(
-        "To find pass between 2 cells press 'c' button. For Q-learning press "
-        "'l' button. ");
-  else
-    printf("To run cave generation press 'c' button. ");
-  printf("q - Quit to previous menu. ");
+  if (c == 'm') {
+    printf("To find pass between 2 cells press " RED "'c'" RESET " button. ");
+    printf("For Q-learning press " RED "'l'" RESET " button. ");
+  } else {
+    printf("To run cave generation press " RED "'c'" RESET " button. ");
+  }
+  printf(RED "q" RESET " - Quit to previous menu. ");
 }
 
-void print_point_menu(int row, int col, char* c) {
-  printf("Input ");
-  printf("%s", c);
-  printf(" row and column separated by space - ");
+void print_point_menu(int row, int col, const char* c) {
+  printf("Input %s row and column separated by space - ", c);
   printf("row from 1 to %d, column from 1 to %d: ", row, col);
 }
 
@@ -40,28 +41,30 @@ void print_output_menu(char c) {
     printf("pass drawing");
   else
     printf("cave creating");
-  printf(" press 'm', for automatic drawing press any key. ");
+  printf(" press " RED "'m'" RESET ", for automatic drawing press any key. ");
 }
 
-void print_input_file_menu() { printf("Input *.txt file name: "); }
+void print_input_file_menu() {
+  printf("Input " RED "*.txt" RESET " file name: ");
+}
 
 void print_chance_menu() {
   printf("Input real/double (0, 1) value of chance for starting cell init: ");
 }
 
 void print_solve_cave_menu() {
-  printf("Input integer 'birth' > 'death' limits [0, 7] separated by space: ");
+  printf("Input integer " RED "'birth'" RESET " > " RED "'death'" RESET);
+  printf(" limits [0, 7] separated by space: ");
 }
 
 void print_get_millseconds_menu() {
-  printf("Input number of milliseconds for algorithm frequency (100 - 500): ");
+  printf("Input number of milliseconds for algorithm frequency (50 - 500): ");
 }
 
 void print_q_learning_menu() {
   printf("Q-learning mode: ");
-  printf("f - Find path from start point; ");
-  printf("v - Visualize Q-values (optional); ");
-  printf("q - Quit to previous menu. ");
+  printf(RED "f" RESET " - Find path from start point; ");
+  printf(RED "q" RESET " - Quit to previous menu. ");
 }
 
 void draw_maze_matrix(const Maze* maze) {
@@ -190,7 +193,7 @@ void print_maze(const Maze* maze) {
   }
   pos += sprintf(buffer + pos, "┘\n");
 
-  pos += sprintf(buffer + pos, "\033[?7h");
+  sprintf(buffer + pos, "\033[?7h");
 
   printf("%s", buffer);
   fflush(stdout);

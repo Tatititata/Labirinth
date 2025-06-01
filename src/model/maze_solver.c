@@ -5,8 +5,10 @@ bool queue_init(Queue *q, int size) {
   return create_array(&q->data, size);
 }
 
-bool queue_empty(Queue *q) { return q->head == q->tail; }
+bool queue_empty(const Queue *q) { return q->head == q->tail; }
+
 void enqueue(Queue *q, Point p) { q->data[q->tail++] = p; }
+
 Point dequeue(Queue *q) { return q->data[q->head++]; }
 
 bool can_go(Maze *maze, int r1, int c1, int r2, int c2) {
@@ -39,8 +41,8 @@ void bfs(Maze *maze, Point end, Point start, Pass *pass) {
     enqueue(&q, start);
     prev[start.row][start.col] = start;
 
-    int dr[4] = {-1, 1, 0, 0};
-    int dc[4] = {0, 0, -1, 1};
+    const int dr[4] = {-1, 1, 0, 0};
+    const int dc[4] = {0, 0, -1, 1};
     bool found = false;
 
     while (!queue_empty(&q) && !found) {

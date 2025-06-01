@@ -35,8 +35,7 @@ bool generate_eller_maze(Maze* maze) {
     set = NULL;
   }
   if (!result) {
-    free_matrix(&maze->v_w);
-    free_matrix(&maze->h_w);
+    destroy_maze(maze);
   }
   return result;
 }
@@ -73,7 +72,7 @@ void make_last_line(Maze* maze, int* set) {
   maze->h_w[maze->rows - 1][maze->cols - 1] = 1;
 }
 
-void check_horizontal_pass(Maze* maze, int* set, int i, int uniques) {
+void check_horizontal_pass(Maze* maze, const int* set, int i, int uniques) {
   for (int s = 1; s < uniques; ++s) {
     int cells[MAX_SIZE] = {0};
     int count = 0;

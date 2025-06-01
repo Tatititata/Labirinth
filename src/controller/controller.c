@@ -66,6 +66,8 @@ void solve_maze(Maze *maze, char c) {
       }
     } else if (!strcmp(str, "l")) {
       q_learning_mode(maze);
+    } else if (!strcmp(str, "v")) {
+      draw_maze_matrix(maze);
     }
   }
 }
@@ -100,6 +102,8 @@ void output_maze(Maze *maze, Pass *pass) {
     }
   }
   clear_screen();
+  printf("\e[?25l");
+  fflush(stdout);
   for (int i = 0; i < pass->length; ++i) {
     draw_maze(maze);
     create_next_step(maze, pass, i);
@@ -110,12 +114,16 @@ void output_maze(Maze *maze, Pass *pass) {
     }
   }
   draw_maze(maze);
+  printf("\e[?25h");
+  fflush(stdout);
   clear_pass(maze, pass);
 }
 
 void delay_ms(int milliseconds) {
-  clock_t start = clock();
-  while ((clock() - start) * 1000 / CLOCKS_PER_SEC < milliseconds);
+  struct timespec ts;
+  ts.tv_sec = milliseconds / 1000;
+  ts.tv_nsec = (milliseconds % 1000) * 1000000;
+  nanosleep(&ts, NULL);
 }
 
 bool load_maze(Maze *maze, char c) {
@@ -154,6 +162,8 @@ void solve_and_output_cave(Maze *cave) {
   }
   int max_iter = 7 + (cave->rows + cave->cols) / 3;
   clear_screen();
+  printf("\e[?25l");
+  fflush(stdout);
   draw_maze(cave);
   while (!solve_cave(cave, birth, death) && max_iter) {
     if (m) {
@@ -165,6 +175,8 @@ void solve_and_output_cave(Maze *cave) {
     max_iter--;
     if (!max_iter) printf("cycle\n");
   }
+  printf("\e[?25h");
+  fflush(stdout);
 }
 
 double get_chance() {
@@ -206,9 +218,11 @@ void q_learning_mode(Maze *maze) {
   goal.col = col - 1;
 
   q_agent_init(&agent, goal);
-  printf("Training agent...");
+  printf("Training agent...\e[?25l");
+  fflush(stdout);
   q_agent_train(&agent, maze);
-  printf("\nTraining complete!\n");
+  printf("\nTraining complete!\e[?25h\n");
+  fflush(stdout);
 
   char str[STR_SIZE] = {0};
   while (strcmp(str, "q")) {
@@ -233,7 +247,7 @@ void q_learning_mode(Maze *maze) {
         printf("No path found!\n");
       }
     } else if (!strcmp(str, "v")) {
-      visualize_q_values(&agent, maze);
+      visualize_q_values(stdout, &agent, maze);
     }
   }
 }
